@@ -87,56 +87,57 @@ class Calculadora:
     @staticmethod
     def eliminacao_gauss(matriz):
 
-        tolerancia = 1e-15
-        n = len(matriz)
+    matriz = np.array(matriz)
+    matriz = matriz.astype(float)
 
-        # Fase 1: Eliminação 
-        for i in range(n - 1):
+    tolerancia = 1e-15
+    n = len(matriz)
 
-            pivot = matriz[i][i]
-            linhaPivotPosicao = i
-            
-            maiorNumeroDaColuna = abs(pivot)
+    # Fase 1: Eliminação 
+    for i in range(n - 1):
 
-            # Pivoteamento parcial
-            for j in range(i+1, n):
-                if abs(matriz[j][i]) > maiorNumeroDaColuna:
-                    maiorNumeroDaColuna = abs(matriz[j][i])
-                    linhaPivotPosicao = j
 
-            matriz[[i, linhaPivotPosicao]] = matriz[[linhaPivotPosicao, i]]
-            pivot = matriz[i][i]
-
-            print(f'Matriz pivoteada {i+1}: ')
-            print(matriz)
-
-            if abs(pivot) > tolerancia:
-                for j in range(i+1, n):
-                    if matriz[j][i] != 0:
-                        m = matriz[j][i] / pivot
-                        matriz[j] = matriz[j] - matriz[i] * m
-            
-            print(f'Matriz gausseada {i+1}: ')
-            print(matriz)
-
-        # Fase 2: Retrosubstituição
+        pivot = matriz[i][i]
+        linhaPivotPosicao = i
         
-        resultados = []
+        maiorNumeroDaColuna = abs(pivot)
+
+
+        # Pivoteamento parcial
+        for j in range(i+1, n):
+            if abs(matriz[j][i]) > maiorNumeroDaColuna:
+                maiorNumeroDaColuna = abs(matriz[j][i])
+                linhaPivotPosicao = j
+
+        matriz[[i, linhaPivotPosicao]] = matriz[[linhaPivotPosicao, i]]
+        pivot = matriz[i][i]
+
+        if abs(pivot) < tolerancia:
+            raise ValueError("A matriz é singular. O sistema pode não ter solução única.")
+
+        for j in range(i+1, n):
+            if matriz[j][i] != 0:
+                m = matriz[j][i] / pivot
+                matriz[j] = matriz[j] - matriz[i] * m
         
-        for i in range(n - 1, -1, -1):
+
+    # Fase 2: Retrosubstituição
+    
+    resultados = []
+    
+    for i in range(n - 1, -1, -1):
+        
+        for j in range(i + 1, n):
             
-            for j in range(i + 1, n):
-                
-                indice_x_j = (n - 1) - j
-                matriz[i][-1] -= matriz[i][j] * resultados[indice_x_j]
-                
-            matriz[i][-1] /= matriz[i][i]
-            resultados.append(matriz[i][-1])
+            indice_x_j = (n - 1) - j
+            matriz[i][-1] -= matriz[i][j] * resultados[indice_x_j]
+            
+        matriz[i][-1] /= matriz[i][i]
+        resultados.append(float(matriz[i][-1]))
 
-        resultados.reverse()
-        
-        return resultados
-
+    resultados.reverse()
+    
+    return resultados
         
 
 
